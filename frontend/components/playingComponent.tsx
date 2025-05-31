@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { WebRTCAdaptor as WebRTCAdaptorType } from '@antmedia/webrtc_adaptor'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 
 interface PlayingComponentProps {
   streamId: string
@@ -61,7 +62,7 @@ const PlayingComponent = ({ streamId }: PlayingComponentProps) => {
               if (error === 'no_stream_exist') {
                 handleStopPlaying()
                 setPlaying(false)
-                alert(error)
+                toast.error(error)
               }
             }
           })
