@@ -5,6 +5,8 @@ import pb from '@/lib/pocketbase';
 export interface Stream {
   id?: string;
   streamId: string;
+  title: string;
+  streamer: string
   // Add other stream properties here if needed
 }
 
