@@ -33,9 +33,6 @@ export default function YourStreamPage () {
                   LIVE
                 </Badge>
               )}
-              <Button variant='outline' size='sm'>
-                <Settings className='w-4 h-4' />
-              </Button>
             </div>
           </div>
 

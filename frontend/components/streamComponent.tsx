@@ -118,8 +118,8 @@ const StreamComponent = () => {
             muted={true} // Local video is often muted to avoid feedback
             playsInline={true}
             style={{
-              width: '40vw',
-              height: '60vh',
+              width: '70vw',
+              height: '75vh',
               maxWidth: '100%',
               maxHeight: '100%'
             }}
