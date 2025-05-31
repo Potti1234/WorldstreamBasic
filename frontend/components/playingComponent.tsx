@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
-import { WebRTCAdaptor } from '@antmedia/webrtc_adaptor'
+import { WebRTCAdaptor as WebRTCAdaptorType } from '@antmedia/webrtc_adaptor'
 import { Button } from '@/components/ui/button'
 
 interface PlayingComponentProps {
@@ -11,7 +11,7 @@ interface PlayingComponentProps {
 const PlayingComponent = ({ streamId }: PlayingComponentProps) => {
   const [playing, setPlaying] = useState(false)
   const [websocketConnected, setWebsocketConnected] = useState(false)
-  const webRTCAdaptor = useRef<WebRTCAdaptor | null>(null)
+  const webRTCAdaptor = useRef<WebRTCAdaptorType | null>(null)
   const playingStream = useRef<string | null>(null)
 
   const handlePlay = () => {
@@ -30,33 +30,41 @@ const PlayingComponent = ({ streamId }: PlayingComponentProps) => {
   }
 
   useEffect(() => {
-    if (webRTCAdaptor.current === undefined || webRTCAdaptor.current === null) {
-      webRTCAdaptor.current = new WebRTCAdaptor({
-        websocket_url: 'wss://ams-30774.antmedia.cloud:5443/LiveApp/websocket',
-        mediaConstraints: {
-          video: false,
-          audio: false
-        },
-        peerconnection_config: {
-          iceServers: [{ urls: 'stun:stun1.l.google.com:19302' }]
-        },
-        sdp_constraints: {
-          OfferToReceiveAudio: true,
-          OfferToReceiveVideo: true // Set to true to receive video
-        },
-        remoteVideoId: 'remoteVideo',
-        callback: (info: any) => {
-          if (info === 'initialized') {
-            setWebsocketConnected(true)
-          }
-        },
-        callbackError: function (error: any, message: any) {
-          console.log(error, message)
-          if (error === 'no_stream_exist') {
-            handleStopPlaying()
-            setPlaying(false)
-            alert(error)
-          }
+    if (typeof window !== 'undefined') {
+      import('@antmedia/webrtc_adaptor').then(({ WebRTCAdaptor }) => {
+        if (
+          webRTCAdaptor.current === undefined ||
+          webRTCAdaptor.current === null
+        ) {
+          webRTCAdaptor.current = new WebRTCAdaptor({
+            websocket_url:
+              'wss://ams-30774.antmedia.cloud:5443/LiveApp/websocket',
+            mediaConstraints: {
+              video: false,
+              audio: false
+            },
+            peerconnection_config: {
+              iceServers: [{ urls: 'stun:stun1.l.google.com:19302' }]
+            },
+            sdp_constraints: {
+              OfferToReceiveAudio: true,
+              OfferToReceiveVideo: true // Set to true to receive video
+            },
+            remoteVideoId: 'remoteVideo',
+            callback: (info: any) => {
+              if (info === 'initialized') {
+                setWebsocketConnected(true)
+              }
+            },
+            callbackError: function (error: any, message: any) {
+              console.log(error, message)
+              if (error === 'no_stream_exist') {
+                handleStopPlaying()
+                setPlaying(false)
+                alert(error)
+              }
+            }
+          })
         }
       })
     }

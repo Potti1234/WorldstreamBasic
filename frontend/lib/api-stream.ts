@@ -56,3 +56,13 @@ export const getAllStreams = async (): Promise<Stream[]> => {
     return [];
   }
 };
+
+export const getStreamById = async (id: string): Promise<Stream | null> => {
+  try {
+    const record = await pb.collection('stream').getOne(id);
+    return record as any;
+  } catch (error) {
+    console.error('Failed to get stream by streamId:', error);
+    return null;
+  }
+};
