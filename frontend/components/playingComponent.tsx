@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { WebRTCAdaptor as WebRTCAdaptorType } from '@antmedia/webrtc_adaptor'
-import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 
 interface PlayingComponentProps {
@@ -10,25 +9,8 @@ interface PlayingComponentProps {
 }
 
 const PlayingComponent = ({ streamId }: PlayingComponentProps) => {
-  const [playing, setPlaying] = useState(false)
-  const [websocketConnected, setWebsocketConnected] = useState(false)
   const webRTCAdaptor = useRef<WebRTCAdaptorType | null>(null)
   const playingStream = useRef<string | null>(null)
-
-  const handlePlay = () => {
-    setPlaying(true)
-    playingStream.current = streamId
-    if (webRTCAdaptor.current) {
-      webRTCAdaptor.current.play(streamId)
-    }
-  }
-
-  const handleStopPlaying = () => {
-    setPlaying(false)
-    if (webRTCAdaptor.current && playingStream.current) {
-      webRTCAdaptor.current.stop(playingStream.current)
-    }
-  }
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -54,20 +36,22 @@ const PlayingComponent = ({ streamId }: PlayingComponentProps) => {
             remoteVideoId: 'remoteVideo',
             callback: (info: any) => {
               if (info === 'initialized') {
-                setWebsocketConnected(true)
+                console.log('initialized')
               }
             },
             callbackError: function (error: any, message: any) {
               console.log(error, message)
               if (error === 'no_stream_exist') {
-                handleStopPlaying()
-                setPlaying(false)
                 toast.error(error)
               }
             }
           })
         }
       })
+
+      if (webRTCAdaptor.current) {
+        webRTCAdaptor.current.play(streamId)
+      }
     }
   }, [])
 
@@ -94,21 +78,7 @@ const PlayingComponent = ({ streamId }: PlayingComponentProps) => {
       </div>
       <div className='flex flex-col items-center'>
         <div className='mb-3 w-full max-w-md'></div>
-        <div className='flex justify-center'>
-          {!playing ? (
-            <Button
-              variant='default'
-              disabled={!websocketConnected}
-              onClick={handlePlay}
-            >
-              Start Playing
-            </Button>
-          ) : (
-            <Button variant='destructive' onClick={handleStopPlaying}>
-              Stop Playing
-            </Button>
-          )}
-        </div>
+        <div className='flex justify-center'></div>
       </div>
     </div>
   )
