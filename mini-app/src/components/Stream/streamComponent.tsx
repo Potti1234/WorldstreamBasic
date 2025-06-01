@@ -5,13 +5,16 @@ import { WebRTCAdaptor as WebRTCAdaptorType } from '@antmedia/webrtc_adaptor' //
 import { Button } from '@/components/ui/button'
 import { createStream, deleteStream } from '@/lib/api-stream'
 import { toast } from 'sonner'
-
-const StreamComponent = () => {
+import { auth } from '@/auth'
+import { redirect } from 'next/navigation'
+const StreamComponent = async () => {
+  const session = await auth()
+  if (!session) {
+    redirect('/')
+  }
   const [publishing, setPublishing] = useState(false)
   const [websocketConnected, setWebsocketConnected] = useState(false)
-  const [streamId, setStreamId] = useState(
-    'stream123' + Math.random().toString(36).substring(2, 15)
-  )
+  const [streamId, setStreamId] = useState(session?.user.username)
   const webRTCAdaptor = useRef<WebRTCAdaptorType | null>(null) // Use aliased type
   const publishingStream = useRef<string | null>(null)
 
