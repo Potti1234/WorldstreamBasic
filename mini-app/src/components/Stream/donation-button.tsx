@@ -4,12 +4,15 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger
+} from '@/components/ui/drawer'
 import { Heart, DollarSign } from 'lucide-react'
 import { toast } from 'sonner'
 import { MiniKit, Tokens, tokenToDecimals } from '@worldcoin/minikit-js'
@@ -95,8 +98,8 @@ export function DonationButton ({ streamerName }: DonationButtonProps) {
   const quickAmounts = ['0.1', '0.5', '1', '5']
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+    <Drawer open={isOpen} onOpenChange={setIsOpen}>
+      <DrawerTrigger asChild>
         <Button
           variant='outline'
           size='sm'
@@ -105,80 +108,91 @@ export function DonationButton ({ streamerName }: DonationButtonProps) {
           <Heart className='w-4 h-4 mr-1' />
           Donate
         </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-md'>
-        <DialogHeader>
-          <DialogTitle>Support {streamerName}</DialogTitle>
-        </DialogHeader>
+      </DrawerTrigger>
+      <DrawerContent>
+        <div className='mx-auto w-full max-w-sm'>
+          <DrawerHeader>
+            <DrawerTitle>Support {streamerName}</DrawerTitle>
+            <DrawerDescription>
+              Make a donation to support your favorite streamer.
+            </DrawerDescription>
+          </DrawerHeader>
 
-        <div className='space-y-4'>
-          <div>
-            <label className='block text-sm font-medium text-gray-700 mb-2'>
-              Donation Amount
-            </label>
-            <div className='relative'>
-              <DollarSign className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400' />
+          <div className='p-4 pb-0 space-y-4'>
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
+                Donation Amount
+              </label>
+              <div className='relative'>
+                <DollarSign className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400' />
+                <Input
+                  type='number'
+                  value={amount}
+                  onChange={e => setAmount(e.target.value)}
+                  placeholder='0.00'
+                  className='pl-10'
+                  min='0.01'
+                  step='0.01'
+                />
+              </div>
+            </div>
+
+            <div className='grid grid-cols-4 gap-2'>
+              {quickAmounts.map(quickAmount => (
+                <Button
+                  key={quickAmount}
+                  variant='outline'
+                  size='sm'
+                  onClick={() => setAmount(quickAmount)}
+                  className='text-xs'
+                >
+                  {quickAmount} WLD
+                </Button>
+              ))}
+            </div>
+
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
+                Message (Optional)
+              </label>
               <Input
-                type='number'
-                value={amount}
-                onChange={e => setAmount(e.target.value)}
-                placeholder='0.00'
-                className='pl-10'
-                min='1'
-                step='0.01'
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+                placeholder='Say something nice...'
+                maxLength={100}
               />
             </div>
+
+            <Button
+              onClick={handleDonate}
+              className='w-full bg-red-500 hover:bg-red-600'
+              disabled={
+                !amount ||
+                Number.parseFloat(amount) <= 0 ||
+                buttonState === 'pending'
+              }
+            >
+              {buttonState === 'pending' ? (
+                'Processing...'
+              ) : (
+                <>
+                  <Heart className='w-4 h-4 mr-2' />
+                  Donate{' '}
+                  {amount
+                    ? `${Number.parseFloat(amount).toFixed(2)} WLD`
+                    : '$0.00'}
+                </>
+              )}
+            </Button>
           </div>
 
-          <div className='grid grid-cols-4 gap-2'>
-            {quickAmounts.map(quickAmount => (
-              <Button
-                key={quickAmount}
-                variant='outline'
-                size='sm'
-                onClick={() => setAmount(quickAmount)}
-                className='text-xs'
-              >
-                ${quickAmount}
-              </Button>
-            ))}
-          </div>
-
-          <div>
-            <label className='block text-sm font-medium text-gray-700 mb-2'>
-              Message (Optional)
-            </label>
-            <Input
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-              placeholder='Say something nice...'
-              maxLength={100}
-            />
-          </div>
-
-          <Button
-            onClick={handleDonate}
-            className='w-full bg-red-500 hover:bg-red-600'
-            disabled={
-              !amount ||
-              Number.parseFloat(amount) <= 0 ||
-              buttonState === 'pending'
-            }
-          >
-            {buttonState === 'pending' ? (
-              'Processing...'
-            ) : (
-              <>
-                <Heart className='w-4 h-4 mr-2' />
-                Donate{' '}
-                {amount
-                  ? `${Number.parseFloat(amount).toFixed(2)} WLD`
-                  : '$0.00'}
-              </>
-            )}
-          </Button>
+          <DrawerFooter>
+            <DrawerClose asChild>
+              <Button variant='outline'>Cancel</Button>
+            </DrawerClose>
+          </DrawerFooter>
         </div>
-      </DialogContent>
-    </Dialog>
+      </DrawerContent>
+    </Drawer>
   )
 }
