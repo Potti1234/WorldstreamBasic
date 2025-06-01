@@ -1,13 +1,13 @@
 'use client'
 
-import { Chat } from '@/components/chat'
-import { DonationButton } from '@/components/donation-button'
+import { Chat } from '@/components/Stream/chat'
+import { DonationButton } from '@/components/Stream/donation-button'
 import { Badge } from '@/components/ui/badge'
 import { Eye } from 'lucide-react'
 import { getStreamById, Stream } from '@/lib/api-stream'
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
-import PlayingComponent from '@/components/playingComponent'
+import PlayingComponent from '@/components/Stream/playingComponent'
 
 export default function StreamPage () {
   const params = useParams<{ id: string }>()
