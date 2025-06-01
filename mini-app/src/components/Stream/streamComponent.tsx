@@ -7,14 +7,12 @@ import { createStream, deleteStream } from '@/lib/api-stream'
 import { toast } from 'sonner'
 import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
-const StreamComponent = async () => {
-  const session = await auth()
-  if (!session) {
-    redirect('/')
-  }
+
+const StreamComponent = () => {
+  const [session, setSession] = useState<any>(null) // Add state for session
   const [publishing, setPublishing] = useState(false)
   const [websocketConnected, setWebsocketConnected] = useState(false)
-  const [streamId, setStreamId] = useState(session?.user.username)
+  const [streamId, setStreamId] = useState('') // Initialize with empty string
   const webRTCAdaptor = useRef<WebRTCAdaptorType | null>(null) // Use aliased type
   const publishingStream = useRef<string | null>(null)
 
@@ -59,6 +57,19 @@ const StreamComponent = async () => {
   const handleStreamIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStreamId(event.target.value)
   }
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const sessionData = await auth()
+      if (!sessionData) {
+        redirect('/')
+      } else {
+        setSession(sessionData)
+        setStreamId(sessionData.user.username) // Set streamId after session is fetched
+      }
+    }
+    fetchSession()
+  }, [])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
