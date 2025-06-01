@@ -51,7 +51,7 @@ export default function StreamPage () {
                     {0}
                   </div>
                 </div>
-                <DonationButton streamerName={stream.streamer} />
+                <DonationButton streamerName={stream.streamId} />
               </div>
 
               <h1 className='text-lg font-semibold text-gray-900 mb-1'>
