@@ -5,14 +5,19 @@ import { WebRTCAdaptor as WebRTCAdaptorType } from '@antmedia/webrtc_adaptor' //
 import { Button } from '@/components/ui/button'
 import { createStream, deleteStream } from '@/lib/api-stream'
 import { toast } from 'sonner'
-import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 const StreamComponent = () => {
-  const [session, setSession] = useState<any>(null) // Add state for session
+  const session = useSession()
+
+  if (!session?.data?.user?.username) {
+    redirect('/')
+  }
+
   const [publishing, setPublishing] = useState(false)
   const [websocketConnected, setWebsocketConnected] = useState(false)
-  const [streamId, setStreamId] = useState('') // Initialize with empty string
+  const [streamId, setStreamId] = useState(session?.data?.user?.username)
   const webRTCAdaptor = useRef<WebRTCAdaptorType | null>(null) // Use aliased type
   const publishingStream = useRef<string | null>(null)
 
@@ -57,19 +62,6 @@ const StreamComponent = () => {
   const handleStreamIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStreamId(event.target.value)
   }
-
-  useEffect(() => {
-    const fetchSession = async () => {
-      const sessionData = await auth()
-      if (!sessionData) {
-        redirect('/')
-      } else {
-        setSession(sessionData)
-        setStreamId(sessionData.user.username) // Set streamId after session is fetched
-      }
-    }
-    fetchSession()
-  }, [])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
