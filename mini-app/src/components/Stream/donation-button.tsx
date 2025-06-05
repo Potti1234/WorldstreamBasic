@@ -131,8 +131,8 @@ export function DonationButton ({ streamerName }: DonationButtonProps) {
                   onChange={e => setAmount(e.target.value)}
                   placeholder='0.00'
                   className='pl-10'
-                  min='0.01'
-                  step='0.01'
+                  min='0.1'
+                  step='0.1'
                 />
               </div>
             </div>
